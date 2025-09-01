@@ -94,7 +94,7 @@
       console.log(`${key}: ${value}`);
     }
 
-    const cl = await FHIR.oauth2.ready();
+    const cl = FHIR.oauth2.ready();
     const p = await cl.smart.patient.read();
     console.log("Patient", p);
 
