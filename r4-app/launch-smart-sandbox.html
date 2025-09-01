@@ -30,6 +30,7 @@
   <!-- Currently, the SMART App Launcher (https://launch.smarthealthit.org) does not check/validate the client_id field.
         If/when this changes, or when working with other authorization servers, please update the client_id field here. -->
   <script>
+    console.log("fix null");
     const queryString = window.location.search;
     console.log("Search params")
     for (const [key, value] of urlParams?.entries()) {
