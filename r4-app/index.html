@@ -76,54 +76,62 @@
     -->
 
   <!-- Application-level javascript-->
-  <script src='./src/js/example-smart-app.js'></script>
+  <!-- <script src='./src/js/example-smart-app.js'></script> -->
 
   <!-- FHIR Client JS Library -->
   <script src='./lib/js/fhir-client.js'></script>
 
   <!-- Prevent session bleed caused by single threaded embedded browser and sessionStorage API -->
   <!-- https://github.com/cerner/fhir-client-cerner-additions -->
-  <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script> -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
   <script>
 
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    console.log("Search params")
-    for (const [key, value] of urlParams.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    import FHIR from './lib/js/fhir-client.js';
+    FHIR.oauth2.ready().then((client) => {
+      console.log("FHIR Client", client);
+      const p = client.patient.read();
+      console.log("Patient", p);
+    }).then(console.log)
+      .catch(console.error);
 
-    const cl = await FHIR.oauth2.ready();
-    const p = cl.patient.read();
-    console.log("Patient", p);
+    // const queryString = window.location.search;
+    // const urlParams = new URLSearchParams(queryString);
+    // console.log("Search params")
+    // for (const [key, value] of urlParams.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
 
-    var obv = cl.patient.api.fetchAll({
-      type: 'Observation',
-      query: {
-        code: {
-          $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
-            'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
-            'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
-        }
-      }
-    });
+    // const cl = await FHIR.oauth2.ready();
+    // const p = cl.patient.read();
+    // console.log("Patient", p);
 
-    console.log("Observations", obv);
+    // var obv = cl.patient.api.fetchAll({
+    //   type: 'Observation',
+    //   query: {
+    //     code: {
+    //       $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
+    //         'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
+    //         'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
+    //     }
+    //   }
+    // });
+
+    // console.log("Observations", obv);
 
 
-    extractData().then(
-      //Display Patient Demographics and Observations if extractData was success
-      function (p) {
-        drawVisualization(p);
-      },
+    // extractData().then(
+    //   //Display Patient Demographics and Observations if extractData was success
+    //   function (p) {
+    //     drawVisualization(p);
+    //   },
 
-      //Display 'Failed to call FHIR Service' if extractData failed
-      function () {
-        $('#loading').hide();
-        $('#errors').html('<p> Failed to call FHIR Service </p>');
-      }
-    );
+    //   //Display 'Failed to call FHIR Service' if extractData failed
+    //   function () {
+    //     $('#loading').hide();
+    //     $('#errors').html('<p> Failed to call FHIR Service </p>');
+    //   }
+    // );
   </script>
 </body>
 
