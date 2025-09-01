@@ -87,9 +87,9 @@
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
   <script>
 
-    FHIR.oauth2.ready().then((client) => {
+    FHIR.oauth2.ready().then(async (client) => {
       console.log("FHIR Client", client);
-      const p = client.patient.read();
+      const p = await client.patient.read();
       console.log("Patient", p);
     }).then(console.log)
       .catch(console.error);
