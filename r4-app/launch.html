@@ -19,14 +19,15 @@
     -->
 
     <!-- FHIR Client JS Library -->
-    <script src='./lib/js/fhir-client-v0.1.12.js'></script>
+    <script src='./lib/js/fhir-client.js'></script>
 
     <!-- Prevent session bleed caused by single threaded embedded browser and sessionStorage API -->
     <!-- https://github.com/cerner/fhir-client-cerner-additions -->
     <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script>
     <script>
+      const clientId= "b1bd6e92-ec3e-49d5-98e5-597d74da28ff";
       FHIR.oauth2.authorize({
-        'client_id': '6c839f48-9312-4277-b471-64349f6177f4',
+        'client_id': clientId,
         'scope':  'patient/Patient.read patient/Observation.read launch online_access openid profile'
       });
     </script>
