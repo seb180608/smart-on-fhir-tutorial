@@ -95,7 +95,7 @@
     }
 
     const cl = FHIR.oauth2.ready();
-    const p = await cl.smart.patient.read();
+    const p = cl.smart.patient.read();
     console.log("Patient", p);
 
     var obv = await cl.smart.patient.api.fetchAll({
