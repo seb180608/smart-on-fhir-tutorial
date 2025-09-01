@@ -94,6 +94,24 @@
       console.log(`${key}: ${value}`);
     }
 
+    const cl = await FHIR.oauth2.ready();
+    const p = await cl.smart.patient.read();
+    console.log("Patient", p);
+
+    var obv = await cl.smart.patient.api.fetchAll({
+      type: 'Observation',
+      query: {
+        code: {
+          $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
+            'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
+            'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
+        }
+      }
+    });
+
+    console.log("Observations", obv);
+
+
     extractData().then(
       //Display Patient Demographics and Observations if extractData was success
       function (p) {
