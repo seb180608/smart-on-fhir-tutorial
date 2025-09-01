@@ -85,9 +85,8 @@
   <!-- https://github.com/cerner/fhir-client-cerner-additions -->
   <!-- <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script> -->
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-  <script type="module">
+  <script>
 
-    import FHIR from './lib/js/fhir-client.js';
     FHIR.oauth2.ready().then((client) => {
       console.log("FHIR Client", client);
       const p = client.patient.read();
