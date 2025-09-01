@@ -32,7 +32,7 @@
   <script>
     const queryString = window.location.search;
     console.log("Search params")
-    for (const [key, value] of urlParams.entries()) {
+    for (const [key, value] of urlParams?.entries()) {
       console.log(`${key}: ${value}`);
     }
 
