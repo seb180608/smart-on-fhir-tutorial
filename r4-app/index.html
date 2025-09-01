@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv='X-UA-Compatible' content='IE=edge' />
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-  <title>Sebbans Example-SMART-App v1 D1</title>
+  <title>Sebbans Example-SMART-App v1 E1</title>
 
   <link rel='stylesheet' type='text/css' href='./src/css/example-smart-app.css'>
   <!--
@@ -98,7 +98,7 @@
     const p = cl.smart.patient.read();
     console.log("Patient", p);
 
-    var obv = await cl.smart.patient.api.fetchAll({
+    var obv =  cl.smart.patient.api.fetchAll({
       type: 'Observation',
       query: {
         code: {
