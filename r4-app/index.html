@@ -94,11 +94,11 @@
       console.log(`${key}: ${value}`);
     }
 
-    const cl = FHIR.oauth2.ready();
-    const p = cl.smart.patient.read();
+    const cl = await FHIR.oauth2.ready();
+    const p = cl.patient.read();
     console.log("Patient", p);
 
-    var obv = cl.smart.patient.api.fetchAll({
+    var obv = cl.patient.api.fetchAll({
       type: 'Observation',
       query: {
         code: {
