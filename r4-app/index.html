@@ -98,7 +98,7 @@
     const p = await cl.smart.patient.read();
     console.log("Patient", p);
 
-    var obv = await cl.smart.patient.api.fetchAll({
+    var obv =  cl.smart.patient.api.fetchAll({
       type: 'Observation',
       query: {
         code: {
