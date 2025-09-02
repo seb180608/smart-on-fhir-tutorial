@@ -2,8 +2,8 @@
   window.extractData = function () {
     var ret = $.Deferred();
 
-    function onError() {
-      console.log('Loading error', arguments);
+    function onError(error) {
+      console.log('Loading error', error);
       ret.reject();
     }
 
@@ -12,21 +12,30 @@
       if (smart.hasOwnProperty('patient')) {
         var patient = smart.patient;
         var pt = patient.read();
-        var obv = smart.patient.api.fetchAll({
-          type: 'Observation',
-          query: {
-            code: {
-              $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
-                'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
-                'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
-            }
-          }
+
+        // Build query for observations using v2 client.request()
+        var query = new URLSearchParams();
+        query.set("patient", smart.patient.id);
+        query.set("_count", 100);
+        query.set("code", [
+          'http://loinc.org|8302-2', // height
+          'http://loinc.org|8462-4', // diastolic BP
+          'http://loinc.org|8480-6', // systolic BP
+          'http://loinc.org|2085-9', // HDL
+          'http://loinc.org|2089-1', // LDL
+          'http://loinc.org|55284-4' // BP panel
+        ].join(","));
+
+        var obv = smart.request("Observation?" + query, {
+          pageLimit: 0,   // get all pages
+          flat: true      // return flat array of Observation resources
         });
 
-        $.when(pt, obv).fail(onError);
+        Promise.all([pt, obv]).then(function (results) {
+          var patient = results[0];
+          var observations = results[1];
 
-        $.when(pt, obv).done(function (patient, obv) {
-          var byCodes = smart.byCodes(obv, 'code');
+          var byCodes = smart.byCodes(observations, 'code');
           var gender = patient.gender;
 
           var fname = '';
@@ -34,7 +43,11 @@
 
           if (typeof patient.name[0] !== 'undefined') {
             fname = patient.name[0].given.join(' ');
-            lname = patient.name[0].family.join(' ');
+            lname = patient.name[0].family;
+            // Handle both string and array formats for family name
+            if (Array.isArray(lname)) {
+              lname = lname.join(' ');
+            }
           }
 
           var height = byCodes('8302-2');
@@ -62,13 +75,13 @@
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
           ret.resolve(p);
-        });
+        }).catch(onError);
       } else {
-        onError();
+        onError(new Error('No patient context available'));
       }
     }
 
-    FHIR.oauth2.ready(onReady, onError);
+    FHIR.oauth2.ready().then(onReady).catch(onError);
     return ret.promise();
 
   };
