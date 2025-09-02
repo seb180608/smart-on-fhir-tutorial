@@ -1,88 +1,83 @@
 (function (window) {
-  // Modern SMART on FHIR v2+ compliant implementation
-  window.extractData = function () {
-    // Return Promise directly from FHIR.oauth2.ready() chain - v2+ pattern
-    return FHIR.oauth2.ready()
-      .then(client => {
-        console.log('FHIR Client', client);
+  // Modern SMART on FHIR v2+ compliant implementation with async/await
+  window.extractData = async function () {
+    try {
+      // Wait for FHIR client to be ready - v2+ pattern
+      const client = await FHIR.oauth2.ready();
+      console.log('FHIR Client', client);
 
-        // Check for patient context - v2+ pattern
-        if (!client.patient) {
-          throw new Error('No patient context available');
-        }
+      // Check for patient context - v2+ pattern
+      if (!client.patient) {
+        throw new Error('No patient context available');
+      }
 
-        // Use client.patient.read() - returns Promise in v2+
-        const patientPromise = client.patient.read();
+      // Build query for observations using v2 client.request()
+      const query = new URLSearchParams();
+      query.set("patient", client.patient.id);
+      query.set("_count", 100);
+      query.set("code", [
+        'http://loinc.org|8302-2', // height
+        'http://loinc.org|8462-4', // diastolic BP
+        'http://loinc.org|8480-6', // systolic BP
+        'http://loinc.org|2085-9', // HDL
+        'http://loinc.org|2089-1', // LDL
+        'http://loinc.org|55284-4' // BP panel
+      ].join(","));
 
-        // Build query for observations using v2 client.request()
-        const query = new URLSearchParams();
-        query.set("patient", client.patient.id);
-        query.set("_count", 100);
-        query.set("code", [
-          'http://loinc.org|8302-2', // height
-          'http://loinc.org|8462-4', // diastolic BP
-          'http://loinc.org|8480-6', // systolic BP
-          'http://loinc.org|2085-9', // HDL
-          'http://loinc.org|2089-1', // LDL
-          'http://loinc.org|55284-4' // BP panel
-        ].join(","));
-
-        // Use client.request() - v2+ pattern
-        const observationsPromise = client.request("Observation?" + query, {
+      // Wait for both patient and observations data concurrently
+      const [patient, observations] = await Promise.all([
+        client.patient.read(),
+        client.request("Observation?" + query, {
           pageLimit: 0,   // get all pages
           flat: true      // return flat array of Observation resources
-        });
+        })
+      ]);
 
-        // Wait for both patient and observations data
-        return Promise.all([patientPromise, observationsPromise])
-          .then(([patient, observations]) => {
-            // Use client.byCodes helper - v2+ pattern
-            const byCodes = client.byCodes(observations, 'code');
-            const gender = patient.gender;
+      // Use client.byCodes helper - v2+ pattern
+      const byCodes = client.byCodes(observations, 'code');
+      const gender = patient.gender;
 
-            let fname = '';
-            let lname = '';
+      let fname = '';
+      let lname = '';
 
-            if (patient.name && patient.name[0]) {
-              fname = patient.name[0].given ? patient.name[0].given.join(' ') : '';
-              lname = patient.name[0].family;
-              // Handle both string and array formats for family name
-              if (Array.isArray(lname)) {
-                lname = lname.join(' ');
-              }
-            }
+      if (patient.name && patient.name[0]) {
+        fname = patient.name[0].given ? patient.name[0].given.join(' ') : '';
+        lname = patient.name[0].family;
+        // Handle both string and array formats for family name
+        if (Array.isArray(lname)) {
+          lname = lname.join(' ');
+        }
+      }
 
-            const height = byCodes('8302-2');
-            const systolicbp = getBloodPressureValue(byCodes('55284-4'), '8480-6');
-            const diastolicbp = getBloodPressureValue(byCodes('55284-4'), '8462-4');
-            const hdl = byCodes('2085-9');
-            const ldl = byCodes('2089-1');
+      const height = byCodes('8302-2');
+      const systolicbp = getBloodPressureValue(byCodes('55284-4'), '8480-6');
+      const diastolicbp = getBloodPressureValue(byCodes('55284-4'), '8462-4');
+      const hdl = byCodes('2085-9');
+      const ldl = byCodes('2089-1');
 
-            const p = defaultPatient();
-            p.birthdate = patient.birthDate;
-            p.gender = gender;
-            p.fname = fname;
-            p.lname = lname;
-            p.height = getQuantityValueAndUnit(height[0]);
+      const p = defaultPatient();
+      p.birthdate = patient.birthDate;
+      p.gender = gender;
+      p.fname = fname;
+      p.lname = lname;
+      p.height = getQuantityValueAndUnit(height[0]);
 
-            if (typeof systolicbp !== 'undefined') {
-              p.systolicbp = systolicbp;
-            }
+      if (typeof systolicbp !== 'undefined') {
+        p.systolicbp = systolicbp;
+      }
 
-            if (typeof diastolicbp !== 'undefined') {
-              p.diastolicbp = diastolicbp;
-            }
+      if (typeof diastolicbp !== 'undefined') {
+        p.diastolicbp = diastolicbp;
+      }
 
-            p.hdl = getQuantityValueAndUnit(hdl[0]);
-            p.ldl = getQuantityValueAndUnit(ldl[0]);
+      p.hdl = getQuantityValueAndUnit(hdl[0]);
+      p.ldl = getQuantityValueAndUnit(ldl[0]);
 
-            return p;
-          });
-      })
-      .catch(error => {
-        console.error('FHIR data extraction failed:', error);
-        throw error; // Re-throw to maintain promise chain
-      });
+      return p;
+    } catch (error) {
+      console.error('FHIR data extraction failed:', error);
+      throw error; // Re-throw to maintain error propagation
+    }
   };
 
   function defaultPatient() {
