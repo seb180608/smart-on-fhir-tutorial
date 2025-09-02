@@ -87,12 +87,25 @@
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
   <script>
 
-    FHIR.oauth2.ready().then(async (client) => {
-      console.log("FHIR Client", client);
-      const p = await client.patient.read();
-      console.log("Patient", p);
-    }).then(console.log)
-      .catch(console.error);
+    extractData().then(
+      //Display Patient Demographics and Observations if extractData was success
+      function (p) {
+        drawVisualization(p);
+      },
+
+      //Display 'Failed to call FHIR Service' if extractData failed
+      function () {
+        $('#loading').hide();
+        $('#errors').html('<p> Failed to call FHIR Service </p>');
+      }
+    );
+
+    // FHIR.oauth2.ready().then(async (client) => {
+    //   console.log("FHIR Client", client);
+    //   const p = await client.patient.read();
+    //   console.log("Patient", p);
+    // }).then(console.log)
+    //   .catch(console.error);
 
     // const queryString = window.location.search;
     // const urlParams = new URLSearchParams(queryString);
