@@ -90,21 +90,53 @@
   <!-- Application-level javascript-->
   <script src='./src/js/example-smart-app.js'></script>
   <script>
-    localStorage.debug = "FHIR.*"
-    extractData().then(
-      //Display Patient Demographics and Observations if extractData was success
-      function (p) {
-        drawVisualization(p);
-      },
 
-      //Display 'Failed to call FHIR Service' if extractData failed
-      function () {
-        $('#loading').hide();
-        $('#errors').html('<p> Failed to call FHIR Service </p>');
-      }
-    );
+    localStorage.debug = "FHIR.*"
+    ////OLD jquery code
+    // extractData().then(
+    //   //Display Patient Demographics and Observations if extractData was success
+    //   function (p) {
+    //     drawVisualization(p);
+    //   },
+
+    //   //Display 'Failed to call FHIR Service' if extractData failed
+    //   function () {
+    //     $('#loading').hide();
+    //     $('#errors').html('<p> Failed to call FHIR Service </p>');
+    //   }
+    // );
     // debugger;
 
+    localStorage.debug = "FHIR.*";
+
+    // Modern JavaScript with async/await and proper error handling
+    async function initializeApp() {
+      try {
+        const patientData = await extractData();
+        drawVisualization(patientData);
+      } catch (error) {
+        console.error('Failed to extract data:', error);
+
+        // Hide loading spinner and show error message
+        const loadingElement = document.getElementById('loading');
+        const errorsElement = document.getElementById('errors');
+
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+        }
+
+        if (errorsElement) {
+          errorsElement.innerHTML = '<p>Failed to call FHIR Service</p>';
+        }
+      }
+    }
+
+    // Initialize the app when DOM is loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
   </script>
 </body>
 

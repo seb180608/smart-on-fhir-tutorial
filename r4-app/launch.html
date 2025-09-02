@@ -27,18 +27,20 @@
   <!-- https://github.com/cerner/fhir-client-cerner-additions -->
   <!-- <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script> -->
   <script>
-    localStorage.debug = "FHIR.*"
-    //cern tut v2 pub
-    let clientId = "b1bd6e92-ec3e-49d5-98e5-597d74da28ff";
-    //cern tut v2 pub patient
-    // clientId = "70ee3a81-af63-4ff1-93fc-6929bcb6e946";
+    localStorage.debug = "FHIR.*";
 
-    debugger;
+    // Modern JavaScript with const/let
+    const clientId = "b1bd6e92-ec3e-49d5-98e5-597d74da28ff";
+    // Alternative client ID for patient context
+    // const clientId = "70ee3a81-af63-4ff1-93fc-6929bcb6e946";
+
+    // Initialize FHIR OAuth2 authorization
     FHIR.oauth2.authorize({
       'client_id': clientId,
       'scope': 'patient/*.rs patient/Patient.rs patient/Observation.rs fhirUser launch online_access openid profile'
+    }).catch(error => {
+      console.error('Authorization failed:', error);
     });
-    debugger;
   </script>
   <div class="spinner">
     <div class="bounce1"></div>
