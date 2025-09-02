@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv='X-UA-Compatible' content='IE=edge' />
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-  <title>Sebbans Example-SMART-App v1 F1</title>
+  <title>Sebbans Example-SMART-App v1B</title>
 
   <link rel='stylesheet' type='text/css' href='./src/css/example-smart-app.css'>
   <!--
@@ -76,17 +76,16 @@
     -->
 
   <!-- Application-level javascript-->
-  <!-- <script src='./src/js/example-smart-app.js'></script> -->
+  <script src='./src/js/example-smart-app.js'></script>
 
   <!-- FHIR Client JS Library -->
   <script src='./lib/js/fhir-client.js'></script>
 
   <!-- Prevent session bleed caused by single threaded embedded browser and sessionStorage API -->
   <!-- https://github.com/cerner/fhir-client-cerner-additions -->
-  <!-- <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script> -->
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+  <script src='./lib/js/fhir-client-cerner-additions-1.0.0.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script>
-
     extractData().then(
       //Display Patient Demographics and Observations if extractData was success
       function (p) {
@@ -99,51 +98,6 @@
         $('#errors').html('<p> Failed to call FHIR Service </p>');
       }
     );
-
-    // FHIR.oauth2.ready().then(async (client) => {
-    //   console.log("FHIR Client", client);
-    //   const p = await client.patient.read();
-    //   console.log("Patient", p);
-    // }).then(console.log)
-    //   .catch(console.error);
-
-    // const queryString = window.location.search;
-    // const urlParams = new URLSearchParams(queryString);
-    // console.log("Search params")
-    // for (const [key, value] of urlParams.entries()) {
-    //   console.log(`${key}: ${value}`);
-    // }
-
-    // const cl = await FHIR.oauth2.ready();
-    // const p = cl.patient.read();
-    // console.log("Patient", p);
-
-    // var obv = cl.patient.api.fetchAll({
-    //   type: 'Observation',
-    //   query: {
-    //     code: {
-    //       $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
-    //         'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
-    //         'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
-    //     }
-    //   }
-    // });
-
-    // console.log("Observations", obv);
-
-
-    // extractData().then(
-    //   //Display Patient Demographics and Observations if extractData was success
-    //   function (p) {
-    //     drawVisualization(p);
-    //   },
-
-    //   //Display 'Failed to call FHIR Service' if extractData failed
-    //   function () {
-    //     $('#loading').hide();
-    //     $('#errors').html('<p> Failed to call FHIR Service </p>');
-    //   }
-    // );
   </script>
 </body>
 
