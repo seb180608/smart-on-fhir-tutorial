@@ -4,6 +4,7 @@
     try {
       // Wait for FHIR client to be ready - v2+ pattern
       const client = await FHIR.oauth2.ready();
+
       console.log('FHIR Client', client);
 
       // Check for patient context - v2+ pattern

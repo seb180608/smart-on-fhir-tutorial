@@ -38,12 +38,14 @@
     const scope = 'user/PractitionerRole.rs launch/practitionerRole patient/Patient.rs patient/Observation.rs fhirUser launch online_access openid profile'
 
     // Initialize FHIR OAuth2 authorization
+    debugger;
     FHIR.oauth2.authorize({
       'client_id': clientId,
       'scope': scope
     }).catch(error => {
       console.error('Authorization failed:', error);
     });
+    debugger;
   </script>
   <div class="spinner">
     <div class="bounce1"></div>

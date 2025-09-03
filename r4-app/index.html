@@ -108,7 +108,7 @@
     // debugger;
 
     localStorage.debug = "FHIR.*";
-
+    debugger;
     // Modern JavaScript with async/await and proper error handling
     async function initializeApp() {
       try {
@@ -135,6 +135,7 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initializeApp);
     } else {
+      debugger;
       initializeApp();
     }
   </script>
